@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dream Business</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Space+Grotesk:wght@300..700&family=Noto+Serif+Thai:wght@400;700&family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --colors-cream: #F5F5F0;
+            --colors-ink: #1A1A1A;
+            --colors-outline: #1E1E1E;
+            --colors-white: #FFFFFF;
+            --colors-coral: #E85D4E;
+            --colors-lime: #C4D94E;
+            --colors-lavender: #C5B5E0;
+            --colors-sky: #8BB4F7;
+            --colors-violet: #A06CE8;
+            --colors-yellow: #F2D160;
+            --colors-peach: #F5B895;
+            --colors-mint: #A8E6CF;
+            --colors-shadow: rgba(26, 26, 26, 0.08);
+            --font-display: "Bodoni Moda", "Noto Serif Thai", serif;
+            --font-body: "Space Grotesk", "Kanit", sans-serif;
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --duration-normal: 0.6s;            
+            --stage-bg: #000;
+            --slide-bg: var(--colors-cream);
+        }
+
+        * { box-sizing: border-box; }
+        html, body {
+            width: 100%; height: 100%; margin: 0; overflow: hidden; background: var(--stage-bg);
+            font-family: var(--font-body);
+            color: var(--colors-ink);
+        }
+        .deck-viewport {
+            position: fixed; inset: 0; overflow: hidden; background: var(--stage-bg);
+        }
+        .deck-stage {
+            position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; transform-origin: 0 0; background: var(--slide-bg);
+        }
+        .slide {
+            position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; display: block; visibility: hidden; opacity: 0; pointer-events: none; background: var(--slide-bg);
+        }
+        .slide.active, .slide.visible {
+            visibility: visible; opacity: 1; pointer-events: auto; z-index: 1;
+        }
+        img, video, canvas, svg { max-width: 100%; max-height: 100%; }
+
+        h1, h2, h3, h4, .stat, .serif { font-family: var(--font-display); font-weight: 700; color: var(--colors-ink); letter-spacing: -0.01em; margin: 0; }
+        p, .sans { font-family: var(--font-body); }
+        
+        .pill {
+            border-radius: 9999px;
+            border: 2px solid var(--colors-outline);
+            display: inline-block;
+            white-space: nowrap;
+        }
+        .pill-card {
+            background: var(--colors-white);
+            border: 2px solid var(--colors-outline);
+            border-radius: 2rem;
+            padding: 2.5rem 2rem;
+            box-shadow: 8px 8px 0 var(--colors-shadow);
+        }
+        
+        /* Typography Scale */
+        .title-display { font-size: clamp(3rem, 8vw, 6rem); font-weight: 800; line-height: 0.9; }
+        .section-headline { font-size: clamp(1.8rem, 3.5vw, 3.5rem); line-height: 1.05; }
+        .body-text { font-size: 1.15rem; line-height: 1.6; opacity: 0.8; }
+        .pill-text { font-size: 0.85rem; font-weight: 600; letter-spacing: 0.1em; }
+        .subtitle { font-size: 1.1rem; letter-spacing: 0.15em; opacity: 0.7; }
+        
+        /* Layout */
+        .slide-content { padding: 4rem; width: 100%; height: 100%; display: flex; flex-direction: column; }
+        .center-content { align-items: center; justify-content: center; text-align: center; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3rem; }
+        .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 2rem; }
+        
+        /* Decorative Atmosphere */
+        .glow { position: absolute; width: 800px; height: 800px; border-radius: 50%; filter: blur(100px); opacity: 0.1; z-index: -1; pointer-events: none; }
+        .glow.lime { background: var(--colors-lime); top: -200px; right: -200px; }
+        .glow.sky { background: var(--colors-sky); bottom: -200px; left: -200px; }
+        .glow.coral { background: var(--colors-coral); bottom: -100px; right: 200px; }
+        .glow.peach { background: var(--colors-peach); top: -100px; left: -100px; }
+        .glow.lavender { background: var(--colors-lavender); bottom: -100px; left: 200px; }
+        .glow.mint { background: var(--colors-mint); top: -200px; left: -200px; }
+        .glow.yellow { background: var(--colors-yellow); bottom: -100px; left: 100px; }
+
+        .floating-pill { position: absolute; padding: 0.6rem 1.5rem; font-size: 0.8rem; font-weight: 700; opacity: 1; border-radius: 9999px; border: 2px solid var(--colors-outline); z-index: 0;}
+        
+        /* Animations */
+        .reveal { opacity: 0; transform: translateY(30px); transition: opacity var(--duration-normal) var(--ease-out-expo), transform var(--duration-normal) var(--ease-out-expo); }
+        .slide.visible .reveal { opacity: 1; transform: translateY(0); }
+        .reveal:nth-child(1) { transition-delay: 0.1s; }
+        .reveal:nth-child(2) { transition-delay: 0.2s; }
+        .reveal:nth-child(3) { transition-delay: 0.3s; }
+        .reveal:nth-child(4) { transition-delay: 0.4s; }
+        .reveal:nth-child(5) { transition-delay: 0.5s; }
+
+        /* Custom UI */
+        .table-ui { width: 100%; border-collapse: collapse; background: var(--colors-white); border: 2px solid var(--colors-outline); border-radius: 2rem; overflow: hidden; box-shadow: 8px 8px 0 var(--colors-shadow); }
+        .table-ui th, .table-ui td { padding: 1.5rem 2rem; border-bottom: 2px solid var(--colors-outline); text-align: left; }
+        .table-ui th { background: var(--colors-yellow); font-family: var(--font-display); font-size: 1.2rem; border-bottom: 2px solid var(--colors-outline); }
+        .table-ui tr:last-child td { border-bottom: none; }
+    </style>
+</head>
+    <body>
+        <div class="deck-viewport">
+            <main class="deck-stage" id="deckStage">
+                
+                <section class="slide title-slide active">
+                    <div class="glow lime"></div>
+                    <div class="glow sky"></div>                    
+                    <div class="floating-pill" style="background: var(--colors-coral); top: 20%; left: 15%; transform: rotate(-15deg);">VISION</div>
+                    <div class="floating-pill" style="background: var(--colors-lavender); top: 30%; right: 20%; transform: rotate(20deg);">BUSINESS</div>
+                    <div class="floating-pill" style="background: var(--colors-mint); bottom: 25%; left: 25%; transform: rotate(10deg);">FUTURE</div>                    
+                    <div class="slide-content center-content reveal">
+                        <div class="pill pill-text" style="background: var(--colors-yellow); padding: 1.5rem 3.5rem; margin-bottom: 2rem;">MY DREAM BUSINESS</div>
+                        <h1 class="title-display">ธุรกิจในฝันของฉัน</h1>
+                            <p class="body-text" style="margin-top: 2rem; max-width: 800px; font-size: 1.5rem;">
+                                (กดปุ่มลูกศร ลง เพื่อไปต่อ)
+                            </p>
+                    </div>
+                </section>
+
+                <section class="slide">
+                    <div class="glow coral"></div>
+                    <div class="slide-content reveal">
+                        <div class="pill pill-text" style="background: var(--colors-lavender); padding: 0.4rem 1.2rem; margin-bottom: 1rem; align-self: flex-start;">ตัวอย่างธุรกิจ</div>
+                        <h2 class="section-headline">รายชื่อธุรกิจทั้งหมดที่อยากทำ...</h2>
+                        <p class="subtitle" style="margin-top: 1rem;">ตัวอย่างอุตสาหกรรมที่สนใจ</p>
+                        
+                        <div class="grid-4" style="margin-top: 3rem;">
+                            <div class="pill-card reveal">
+                                <div class="pill" style="width:60px; height:60px; background:var(--colors-coral); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:1.5rem; margin-bottom: 1.5rem;">I</div>
+                                <h3 style="font-size:1.5rem; margin-bottom:1rem;">Game Engine</h3>
+                                <p class="body-text">ระบบจัดการทรัพยาที่ใช้ในการสร้างเกม</p>
+                                <ul>
+                                    <li>Glacier</li>
+                                    <li>
+                                        Unity
+                                        <ul>
+                                        <li>self project</li>                                        
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="pill-card reveal">
+                                <div class="pill" style="width:60px; height:60px; background:var(--colors-lime); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:1.5rem; margin-bottom: 1.5rem;">II</div>
+                                <h3 style="font-size:1.5rem; margin-bottom:1rem;">AI Developer</h3>
+                                <p class="body-text">นักพัฒนา AI</p>
+                                    <ul>                                        
+                                        <li>
+                                            Seedance
+                                            <ul>
+                                            <li>สร้าง RAG</li>                                        
+                                            </ul>
+                                        </li>
+                                    </ul>
+                            </div>
+                            <div class="pill-card reveal">
+                                <div class="pill" style="width:60px; height:60px; background:var(--colors-sky); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:1.5rem; margin-bottom: 1.5rem;">III</div>
+                                <h3 style="font-size:1.5rem; margin-bottom:1rem;">Blockchain Developer</h3>
+                                <p class="body-text">นักพัฒนาสัญญาอัจฉริยะ</p>
+                                    <ul>
+                                        <li>Ethereum</li>
+                                        <li>
+                                            SmartContract Wizard
+                                            <ul>
+                                            <li>Remix</li>                                        
+                                            </ul>
+                                        </li>
+                                    </ul>
+                            </div>
+                            <div class="pill-card reveal">
+                                <div class="pill" style="width:60px; height:60px; background:var(--colors-violet); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:1.5rem; margin-bottom: 1.5rem;">IV</div>
+                                <h3 style="font-size:1.5rem; margin-bottom:1rem;">VFX Artist</h3>
+                                <p class="body-text">การใช้โปรแกรมสำหรับสร้าง VFX ในโปรดักชั่น</p>
+                                    <ul>
+                                        <li>After Effect</li>
+                                        <li>
+                                            Houdini
+                                            <ul>
+                                            <li>VFX</li>                                        
+                                            </ul>
+                                        </li>
+                                    </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+          
+                <section class="slide title-slide">
+                    <div class="glow coral"></div>
+                    <div class="glow yellow"></div>                
+                        <div class="slide-content center-content reveal">
+                            <h1 class="title-display">ขอบคุณ</h1>
+                            <div class="pill pill-text" style="background: var(--colors-yellow); padding: 1.5rem 3.5rem; margin-top: 3rem;">INTRO ECOSYSTEM</div>
+                        </div>
+                </section>
+            </main>
+        </div>
+
+        <script>
+            class SlidePresentation {
+                constructor() {
+                    this.slides = document.querySelectorAll('.slide');
+                    this.currentSlide = 0;
+                    this.stage = document.getElementById('deckStage');
+                    this.setupStageScale();
+                    this.setupKeyboardNav();
+                    this.showSlide(0);
+                }
+
+                setupStageScale() {
+                    const scale = () => {
+                        const factor = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+                        const x = (window.innerWidth - 1920 * factor) / 2;
+                        const y = (window.innerHeight - 1080 * factor) / 2;
+                        this.stage.style.transform = `translate(${x}px, ${y}px) scale(${factor})`;
+                    };
+                    scale();
+                    window.addEventListener('resize', scale);
+                }
+
+                setupKeyboardNav() {
+                    document.addEventListener('keydown', (e) => {
+                        if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'ArrowDown') {
+                            this.showSlide(this.currentSlide + 1);
+                        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                            this.showSlide(this.currentSlide - 1);
+                        }
+                    });
+                }
+
+                showSlide(index) {
+                    this.currentSlide = Math.max(0, Math.min(index, this.slides.length - 1));
+                    this.slides.forEach((slide, i) => {
+                        slide.classList.toggle('active', i === this.currentSlide);
+                        slide.classList.toggle('visible', i === this.currentSlide);
+                    });
+                }
+            }
+            new SlidePresentation();
+        </script>
+    </body>
+</html>
