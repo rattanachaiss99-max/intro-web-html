@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rattanachai CV</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Space+Grotesk:wght@300..700&family=Noto+Serif+Thai:wght@400;700&family=Kanit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --colors-cream: #F5F5F0;
+            --colors-ink: #1A1A1A;
+            --colors-outline: #1E1E1E;
+            --colors-white: #FFFFFF;
+            --colors-coral: #E85D4E;
+            --colors-lime: #C4D94E;
+            --colors-lavender: #C5B5E0;
+            --colors-sky: #8BB4F7;
+            --colors-violet: #A06CE8;
+            --colors-yellow: #F2D160;
+            --colors-peach: #F5B895;
+            --colors-mint: #A8E6CF;
+            --colors-shadow: rgba(26, 26, 26, 0.08);
+            --font-display: "Bodoni Moda", "Noto Serif Thai", serif;
+            --font-body: "Space Grotesk", "Kanit", sans-serif;
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --duration-normal: 0.6s;
+            --stage-bg: #000;
+            --slide-bg: var(--colors-cream);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            min-height: 100vh;
+            margin: 0;
+            overflow: auto;
+            background: var(--stage-bg);
+            font-family: var(--font-body);
+            color: var(--colors-ink);
+        }
+
+        .deck-viewport {
+            width: 100%;
+            min-height: 100vh;
+            background: var(--stage-bg);
+        }
+
+        .deck-stage {
+            width: 100%;
+            max-width: 1920px;
+            margin: 0 auto;
+            background: var(--slide-bg);
+            position: relative;
+            overflow: hidden;
+            /* to contain glows */
+        }
+
+        .slide {
+            width: 100%;
+            position: relative;
+            display: block;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            background: var(--slide-bg);
+        }
+
+        .slide.active,
+        .slide.visible {
+            visibility: visible;
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 1;
+        }
+
+        img,
+        video,
+        canvas,
+        svg {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .stat,
+        .serif {
+            font-family: var(--font-display);
+            font-weight: 700;
+            color: var(--colors-ink);
+            letter-spacing: -0.01em;
+            margin: 0;
+        }
+
+        p,
+        .sans {
+            font-family: var(--font-body);
+        }
+
+        .pill {
+            border-radius: 9999px;
+            border: 2px solid var(--colors-outline);
+            display: inline-block;
+            white-space: nowrap;
+        }
+
+        .pill-card {
+            background: var(--colors-white);
+            border: 2px solid var(--colors-outline);
+            border-radius: 2rem;
+            padding: 2.5rem 2rem;
+            box-shadow: 8px 8px 0 var(--colors-shadow);
+        }
+
+        /* Typography Scale */
+        .title-display {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 800;
+            line-height: 0.9;
+        }
+
+        .section-headline {
+            font-size: clamp(1.8rem, 3.5vw, 3.5rem);
+            line-height: 1.05;
+        }
+
+        .body-text {
+            font-size: 1.15rem;
+            line-height: 1.6;
+            opacity: 0.8;
+        }
+
+        .pill-text {
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            letter-spacing: 0.15em;
+            opacity: 0.7;
+        }
+
+        /* Layout */
+        .slide-content {
+            padding: 4rem;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .center-content {
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 3rem;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 2rem;
+        }
+
+        /* Decorative Atmosphere */
+        .glow {
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.1;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .glow.lime {
+            background: var(--colors-lime);
+            top: -200px;
+            right: -200px;
+        }
+
+        .glow.sky {
+            background: var(--colors-sky);
+            bottom: -200px;
+            left: -200px;
+        }
+
+        .glow.coral {
+            background: var(--colors-coral);
+            bottom: -100px;
+            right: 200px;
+        }
+
+        .glow.peach {
+            background: var(--colors-peach);
+            top: -100px;
+            left: -100px;
+        }
+
+        .glow.lavender {
+            background: var(--colors-lavender);
+            bottom: -100px;
+            left: 200px;
+        }
+
+        .glow.mint {
+            background: var(--colors-mint);
+            top: -200px;
+            left: -200px;
+        }
+
+        .glow.yellow {
+            background: var(--colors-yellow);
+            bottom: -100px;
+            left: 100px;
+        }
+
+        .floating-pill {
+            position: absolute;
+            padding: 0.6rem 1.5rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            opacity: 1;
+            border-radius: 9999px;
+            border: 2px solid var(--colors-outline);
+            z-index: 0;
+        }
+
+        /* Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity var(--duration-normal) var(--ease-out-expo), transform var(--duration-normal) var(--ease-out-expo);
+        }
+
+        .slide.visible .reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal:nth-child(1) {
+            transition-delay: 0.1s;
+        }
+
+        .reveal:nth-child(2) {
+            transition-delay: 0.2s;
+        }
+
+        .reveal:nth-child(3) {
+            transition-delay: 0.3s;
+        }
+
+        .reveal:nth-child(4) {
+            transition-delay: 0.4s;
+        }
+
+        .reveal:nth-child(5) {
+            transition-delay: 0.5s;
+        }
+
+        /* Custom UI */
+        .table-ui {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--colors-white);
+            border: 2px solid var(--colors-outline);
+            border-radius: 2rem;
+            overflow: hidden;
+            box-shadow: 8px 8px 0 var(--colors-shadow);
+        }
+
+        .table-ui th,
+        .table-ui td {
+            padding: 1.5rem 2rem;
+            border-bottom: 2px solid var(--colors-outline);
+            text-align: left;
+        }
+
+        .table-ui th {
+            background: var(--colors-yellow);
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            border-bottom: 2px solid var(--colors-outline);
+        }
+
+        .table-ui tr:last-child td {
+            border-bottom: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="deck-viewport">
+        <main class="deck-stage" id="deckStage">
+            <section class="slide">
+                <div class="glow mint"></div>
+                <div class="slide-content center-content reveal">
+                    <div class="reveal" style="background: var(--colors-white); border: 2px solid var(--colors-outline); border-radius: 2rem; padding: 4rem; box-shadow: 12px 12px 0 var(--colors-shadow); position: relative; max-width: 1200px; text-align: left;">
+                        <div class="pill"
+                            style="background: var(--colors-yellow); padding: 0.8rem 2rem; position: absolute; top: -1.5rem; left: 4rem; font-weight: 700; font-size: 1.2rem;">
+                            My CV_Resume
+                        </div>
+                            <h1>
+                                <span class="c3 c0">Rattanachai Kanjiak</span>
+                            </h1>
+
+                            <span class="c1"> &nbsp; &nbsp; &nbsp; Chiang Rai &bull; Mengrai, 57290 &bull; </span>
+                                <span class="c1">
+                                    <a class="c30"
+                                        href="mailto:youremail@college.harvard.edu">rattanachaiss99@gmail.com
+                                    </a>
+                                </span>
+                            <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 602.33px; height: 1.33px;">
+                                <img alt="" src="images/image1.png"
+                                    style="width: 602.33px; height: 1.33px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+                                    title="">
+                            </span>
+                        <div>
+                            
+                        </div>
+
+                        <h2 class="c29"><span class="c1">Education</span></h2>
+                        <span class="c1">&nbsp; &nbsp; &nbsp; King Mongkut&#39;s University of Technology Thonburi
+                                University&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="c1">&nbsp; &nbsp; Bachelor of science&nbsp;2.49<br></span>                           
+                        
+                        <span class="c0">&nbsp; &nbsp;&nbsp; &nbsp;Thesis 
+                            <span class="c1">&nbsp; : 3D with Cloud Rendering &nbsp;
+                                <span class="c0">[Note:
+                                </span>
+                                    <span class="c12">Use Token as Renderer</span><span class="c0">]
+                                <br>
+                            </span>
+                        </span>
+
+                        <h2 class="c36" id="h.b1sc734z4o4u">
+                            <span class="c12">
+                                Experience
+                            </span>
+                        </h2>
+                        <p class="c33">
+                            <span class="c9">
+
+                            </span>
+                        </p>
+                        <p class="c1"><span class="c1">Yannix</span></p>
+                        <p class="c1"><span class="c1">2D Tracker</span></p>
+                        <ul class="c2 lst-kix_list_1-0 start">
+                            <li class="c35 li-bullet-0">
+                                <span class="c12">Tracking cinematic camera position</span><span
+                                    class="c0">
+                                </span>
+                            </li>
+                            <li class="c3 li-bullet-0"><span class="c12">Learning Hollywood Pipeline.</span></li>
+                        </ul>
+                        <p class="c28"><span class="c12 c14"></span></p>
+                        <p class="c16"><span class="c9">Hansa
+                                International&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span>
+                            </p>
+                            <p class="c15"><span class="c9">3D Artist&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                &nbsp; &nbsp; &nbsp; </span>
+                            </p>
+                        <ul class="c2 lst-kix_list_1-0">
+                            <li class="c24 li-bullet-0"><span class="c12">Japanese Company create landscape for history
+                                    blueprint</span>
+                            </li>
+                            <li class="c3 li-bullet-0"><span class="c12">3D Modeling and Texturing <br></span></li>
+                        </ul>
+                        <h2 class="c1"> Leadership &amp; Activities </h2>
+                        <p class="c11"><span class="c9">Thai-Asia Technological
+                                College&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                &nbsp; &nbsp;</span>
+                        </p>
+                        <p class="c15"><span class="c9">Teacher</span>
+                            <span
+                                class="c10 c9">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                &nbsp; &nbsp; &nbsp; &nbsp;</span>
+                                <span class="c0"><br></span></p>
+
+                        <ul class="c2 lst-kix_list_1-0">
+                            <li class="c17 li-bullet-1"><span class="c12">Teaching student in class.</span></li>
+                        </ul>
+                        <p class="c27"><span class="c7"></span></p>
+                        <p class="c22"><span class="c12 c23"></span></p>
+                        <h3 class="c26"><span class="c9">&nbsp; &nbsp; &nbsp; &nbsp; Skills &amp; Interests</span></h3>
+                        <p class="c11"><span class="c10 c9">Technical: </span><span class="c12">Autodesk 3DsMax , Maya ,
+                                Unity ,
+                                vue.js</span></p>
+                        <p class="c11"><span class="c10 c9">Language:</span><span class="c9">&nbsp;</span><span
+                                class="c12">English :
+                                poor</span></p>
+                        <p class="c11"><span class="c10 c9">Laboratory:</span><span class="c9">&nbsp;N/A</span></p>
+                        <p class="c11"><span class="c10 c9">Interests: </span><span class="c12">Science and
+                                Technology</span></p>
+
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        class SlidePresentation {
+            constructor() {
+                this.slides = document.querySelectorAll('.slide');
+                this.currentSlide = 0;
+                this.stage = document.getElementById('deckStage');
+                // this.setupStageScale();
+                this.setupKeyboardNav();
+                this.showSlide(0);
+            }
+
+            setupStageScale() {
+                // Scaling disabled to allow normal page scrolling
+            }
+
+            setupKeyboardNav() {
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'ArrowDown') {
+                        this.showSlide(this.currentSlide + 1);
+                    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                        this.showSlide(this.currentSlide - 1);
+                    }
+                });
+            }
+
+            showSlide(index) {
+                this.currentSlide = Math.max(0, Math.min(index, this.slides.length - 1));
+                this.slides.forEach((slide, i) => {
+                    slide.classList.toggle('active', i === this.currentSlide);
+                    slide.classList.toggle('visible', i === this.currentSlide);
+                });
+            }
+        }
+        new SlidePresentation();
+    </script>
+</body>
+
+</html>
